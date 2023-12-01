@@ -1,9 +1,7 @@
-// AOC1.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -45,14 +43,14 @@ int main()
     long sum = 0;
 
 #pragma region Input String
-    std::string input = "";
+    fstream newFile;
 
-    istringstream stream(input);
+    newFile.open("input.txt", ios::in);
 #pragma endregion
 
-    string line = "";
+    string line;
 
-    while (getline(stream, line)) {
+    while (getline(newFile, line)) {
         sum += GetLineNumber(line);
     }
 
