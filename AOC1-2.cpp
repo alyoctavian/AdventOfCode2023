@@ -12,27 +12,31 @@ string digits[] = { "zero", "one", "two", "three", "four", "five", "six", "seven
 
 int GetFirstDigit(string line)
 {
-    string original = line;
-
     int first = -1;
 
     int min_pos = line.length() + 1;
 
-    for (const auto& digit : digits)
+    for (int i = 0; i < size(digits); i++)
     {
-        auto pos = line.find(digit);
-        if (pos != string::npos && pos < min_pos)
+        size_t pos = line.find(digits[i]);
+
+        if (pos != string::npos)
         {
-            min_pos = pos;
-            first = distance(begin(digits), find(begin(digits), end(digits), digit));
+            if (pos < min_pos)
+            {
+                min_pos = pos;
+
+                first = i;
+            }
         }
     }
 
-    for (size_t i = 0; i < min_pos && i < line.length(); ++i)
+    for (int i = 0; i < min_pos; i++)
     {
         if (isdigit(line[i]))
         {
             first = line[i] - '0';
+
             break;
         }
     }
@@ -44,7 +48,9 @@ int GetLastDigit(string line)
 {
     int last = 0;
 
-    for (int j = line.length() - 1; j >= 0; j--)
+    int j;
+
+    for (j = line.length() - 1; j >= 0; j--)
     {
         if (isdigit(line[j]))
         {
@@ -54,19 +60,23 @@ int GetLastDigit(string line)
         }
     }
 
-    string newStr = line.substr(j + 1);
+    int last_pos = j + 1;
 
-    size_t max_pos = j;
+    string newStr = line.substr(last_pos, string::npos);
 
-    for (const auto& digit : digits)
+    int max_pos = j;
+
+    for (int i = 0; i < size(digits) && newStr.length() > 0; i++)
     {
-        while (!newStr.empty())
+        while (newStr.length() > 0)
         {
-            size_t pos = newStr.find(digit);
+            size_t pos = newStr.find(digits[i]);
+
             if (pos != string::npos)
             {
-                last = distance(begin(digits), find(begin(digits), end(digits), digit));
-                newStr = newStr.substr(pos + 1);
+                    last = i;
+
+                    newStr = newStr.substr(pos + 1, string::npos);
             }
             else
             {
@@ -94,8 +104,7 @@ int main()
 
         int last = GetLastDigit(line);
 
-        // Debug output
-        //cout << line << " " << first << " " << last << endl;
+        cout << line << " " << first << " " << last << endl;
 
         sum += first * 10 + last;
     }
