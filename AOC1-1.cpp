@@ -41,12 +41,10 @@ int GetLineNumber(string line)
 int main()
 {
     long sum = 0;
-
-#pragma region Input String
+    
     fstream newFile;
 
     newFile.open("input.txt", ios::in);
-#pragma endregion
 
     string line;
 
@@ -54,5 +52,7 @@ int main()
         sum += GetLineNumber(line);
     }
 
+    newFile.close();
+    
     cout << sum;
 }
