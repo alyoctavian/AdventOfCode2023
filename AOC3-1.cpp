@@ -11,23 +11,23 @@ using namespace std;
 const int SIGN_VALUE = -1;
 
 vector<pair<int, bool*>> curr;
-vector<pair<int, bool*>> above;
+vector<pair<int, bool*>> last;
 
 int sum = 0;
 
-bool IsValidNum(int pos, vector<pair<int, bool*>> v)
+bool IsValidNum(int pos, vector<pair<int, bool*>> vect)
 {
-    if (v[pos].first <= 0)
+    if (vect[pos].first <= 0)
     {
         return false;
     }
 
-    if (pos > 0 && v[pos - 1].first > 0 && *v[pos].second == true)
+    if (pos > 0 && vect[pos - 1].first > 0 && *vect[pos].second == true)
     {
         return false;
     }
 
-    *v[pos].second = true;
+    *vect[pos].second = true;
 
     return true;
 }
@@ -40,38 +40,38 @@ void ProcessSign(int pos)
         sum += curr[pos - 1].first;
     }
 
-    if (pos > 0 && IsValidNum(pos - 1, above))
+    if (pos > 0 && IsValidNum(pos - 1, last))
     {
-        cout << above[pos - 1].first << endl;
-        sum += above[pos - 1].first;
+        cout << last[pos - 1].first << endl;
+        sum += last[pos - 1].first;
     }
 
-    if (IsValidNum(pos, above))
+    if (IsValidNum(pos, last))
     {
-        cout << above[pos].first << endl;
-        sum += above[pos].first;
+        cout << last[pos].first << endl;
+        sum += last[pos].first;
     }
 
-    if (pos < above.size() - 1 && IsValidNum(pos + 1, above))
+    if (pos < last.size() - 1 && IsValidNum(pos + 1, last))
     {
-        cout << above[pos + 1].first << endl;
-        sum += above[pos + 1].first;
+        cout << last[pos + 1].first << endl;
+        sum += last[pos + 1].first;
     }
 }
 
 bool IsUnderSign(int pos)
 {
-    if (pos > 0 && above[pos - 1].first < 0)
+    if (pos > 0 && last[pos - 1].first < 0)
     {
         return true;
     }
 
-    if (above[pos].first < 0)
+    if (last[pos].first < 0)
     {
         return true;
     }
 
-    if (pos < above.size() - 1 && above[pos + 1].first < 0)
+    if (pos < last.size() - 1 && last[pos + 1].first < 0)
     {
         return true;
     }
@@ -81,10 +81,6 @@ bool IsUnderSign(int pos)
 
 int ProcessNumber(int pos, string line)
 {
-    bool underSign = false;
-
-    int index = pos + 1;
-
     int number = line[pos] - '0';
 
     bool* isChecked = new bool;
@@ -93,18 +89,23 @@ int ProcessNumber(int pos, string line)
 
     curr[pos].second = isChecked;
 
+    bool underSign = false;
+
     if (IsUnderSign(pos))
     {
         underSign = true;
     }
 
+    int index = pos + 1;
+
+    // Create the number while the line continues with digits
     while (isdigit(line[index]) && index < line.length())
     {
         number = number * 10 + line[index] - '0';
 
         curr[index].second = isChecked;
 
-        if (IsUnderSign(index))
+        if (!underSign && IsUnderSign(index))
         {
             underSign = true;
         }
@@ -112,11 +113,13 @@ int ProcessNumber(int pos, string line)
         index++;
     }
 
+    // It has a sign to the left
     if (pos > 0 && curr[pos - 1].first < 0)
     {
         cout << number << endl;
         sum += number;
     }
+    // It has a symbol on the line above
     else if (underSign)
     {
         cout << number << endl;
@@ -179,14 +182,14 @@ int main()
     curr.resize(line.length());
     std::fill(curr.begin(), curr.end(), standardPair);
 
-    above.resize(line.length());
-    std::fill(above.begin(), above.end(), standardPair);
+    last.resize(line.length());
+    std::fill(last.begin(), last.end(), standardPair);
 
     ProcessCurrent(line);
 
     while (getline(newFile, line))
     {
-        above = curr;
+        last = curr;
 
         std::fill(curr.begin(), curr.end(), standardPair);
 
